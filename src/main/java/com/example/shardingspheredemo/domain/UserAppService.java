@@ -1,5 +1,6 @@
 package com.example.shardingspheredemo.domain;
 
+import org.apache.shardingsphere.api.hint.HintManager;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -20,11 +21,19 @@ public class UserAppService {
 
     @Transactional
     public void save(String username) {
-        User user = new User();
+        try (HintManager hintManager = HintManager.getInstance()) {
+            hintManager.setDatabaseShardingValue("db1");
+            User user = new User(username);
+            repository.save(user);
+        }
     }
 
+    @Transactional
     public List<User> findAll() {
-        return repository.findAll();
+        try (HintManager hintManager = HintManager.getInstance()) {
+            hintManager.setDatabaseShardingValue("db1");
+            return repository.findAll();
+        }
     }
 
 }

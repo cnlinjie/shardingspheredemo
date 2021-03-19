@@ -22,6 +22,7 @@ class UserAppServiceTest {
 
     @Test
     void save() {
+        userAppService.save("Test");
     }
 
     @Test
